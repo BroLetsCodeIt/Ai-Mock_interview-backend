@@ -4,7 +4,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/db/connectDB.js';
 import passport from 'passport';
-import userModel from './models/User.js';
+import router from './routes/userRouter.js';
 configDotenv();
 
 const PORT = process.env.PORT ;
@@ -19,24 +19,24 @@ const corsOptions = {
 };
 
 
-// middlewares 
+// middlewares s
 app.use(cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser())
 app.use(passport.initialize());
 
 
+// Database call 
+connectDB(DB_URL);
 
 
-// request 
+// load routes 
+app.use('/api/user', router)
+
+
 app.get("/" , (req ,res) => {
     res.send({message : "hello world" , status : 200})
 })
-
-
-// Database call 
-
-connectDB(DB_URL)
 
 
 
