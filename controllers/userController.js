@@ -2,6 +2,9 @@ import userModel from "../models/User.js";
 import EmailVerificationModel from "../models/EmailVerification.js";
 import bcrypt from 'bcrypt'
 import sendEmailVerificationOTP from "../utils/sendEmailVerification.js";
+import generateToken from "../utils/generateToken.js";
+import setTokensCookies from "../utils/setTokenCookies.js";
+import refreshAccessToken from "../utils/refreshAccessToken.js";
 class userController {
 
     // user registration 
@@ -153,26 +156,62 @@ class userController {
 
            // Generate Tokens 
 
-         
+           
+           const {accessToken , accessTokenExp , refreshToken , refreshTokenExp} = await generateToken(user);
+           
            // set cookies 
 
 
-           // send success response with
+           setTokensCookies(res , accessToken , accessTokenExp , refreshToken , refreshTokenExp);     
 
 
 
-           
-
-           
+           // send success response with tokens
+           res.status(200).json({
+             user : {id : user._id , email : user.email , name : user.name , roles: user.roles[0]} ,
+             status : "success" , 
+             message : "login successfull" ,
+             access_token : accessToken , 
+             refresh_token : refreshToken ,
+             access_token_exp : accessTokenExp ,
+             is_auth : true
+           })
         
-
         } catch (error) {
             console.log(error);
             res.status(400).json({ status : "failed" , message : "Unable to login , please try again later"});
         }
     }
 
+    // get newAccessToken 
+    static getNewAccessToken = async (req ,res) => {
+       
+        try {
 
+            // Get new access token using refresh token 
+            const {newAccessToken , newRefreshToken , newAccessTokenExp , newRefreshTokenExp} = await refreshAccessToken(req ,res);
+           
+            // set new tokens to cookies
+            setTokensCookies(res, newAccessToken , newAccessTokenExp , newRefreshToken , newRefreshTokenExp);
+
+
+            res.status(200).send({
+                status : "success" , 
+                message : "New Tokens generated" , 
+                access_token : newAccessToken , 
+                refresh_token : newRefreshToken , 
+                access_token_exp : newAccessTokenExp
+            })
+            
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                status : "failed" , 
+                message : "Unable to generate new Token , please try again later"
+            })
+        }
+
+    } 
 
 }
 

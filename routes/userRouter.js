@@ -8,6 +8,8 @@ const router = Router() ;
 
 router.post('/register',userController.userRegistration);
 router.post('/verify-email',userController.VerifyEmail);
+router.post('/login' , userController.userLogin);
+router.post('/refresh-token' , userController.getNewAccessToken)
 
 
 export default router; 
