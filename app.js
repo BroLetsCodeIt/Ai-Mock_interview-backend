@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import connectDB from './config/db/connectDB.js';
 import passport from 'passport';
 import router from './routes/userRouter.js';
+import './config/passport-jwt-strategy.js'
 configDotenv();
 
 const PORT = process.env.PORT ;

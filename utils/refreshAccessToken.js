@@ -10,7 +10,6 @@ const refreshAccessToken = async (req , res) => {
          const oldRefreshToken = req.cookies.refreshToken ;
          
          // verify the oldRefreshToken (valid or not )
-
          const { tokenDetails ,  error  } = await verifyRefreshToken(oldRefreshToken);
          
          if(error){
